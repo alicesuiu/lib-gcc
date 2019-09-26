@@ -1,0 +1,9 @@
+menuconfig LIBGCC
+	bool "gcc - GNU Compiler Collection libraries"
+	default n
+	select LIBNOLIBC if !HAVE_LIBC
+	select LIBUKDEBUG
+	select LIBUKALLOC
+
+if LIBGCC
+endif
