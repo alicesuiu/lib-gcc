@@ -6,4 +6,18 @@ menuconfig LIBGCC
 	select LIBUKALLOC
 
 if LIBGCC
+
+config LIBBACKTRACE
+	bool "libbacktrace library"
+	default n
+	select LIBNEWLIBC
+	select LIBCOMPILER_RT
+	select LIBUNWIND
+	select LIBCXX
+	select LIBCXXABI
+	select LIBUKMMAP
+	select UKSYSINFO
+if LIBBACKTRACE
+endif
+
 endif

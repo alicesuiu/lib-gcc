@@ -40,6 +40,7 @@
 # Library registration
 ################################################################################
 $(eval $(call addlib_s,libgcc,$(CONFIG_LIBGCC)))
+$(eval $(call addlib_s,libbacktrace,$(CONFIG_LIBBACKTRACE)))
 
 ################################################################################
 # Original sources
@@ -53,9 +54,41 @@ $(eval $(call fetch,libgcc,$(LIBGCC_URL)))
 # Helpers
 ################################################################################
 LIBGCC_EXTRACTED = $(LIBGCC_ORIGIN)/gcc-$(LIBGCC_VERSION)
+LIBBACKTRACE_EXTRACTED = $(LIBGCC_EXTRACTED)/libbacktrace
 
 ################################################################################
 # Library includes
 ################################################################################
 CINCLUDES-$(CONFIG_LIBGCC)   += -I$(LIBGCC_BASE)/include
 CXXINCLUDES-$(CONFIG_LIBGCC) += -I$(LIBGCC_BASE)/include
+
+CINCLUDES-$(CONFIG_LIBBACKTRACE)   += -I$(LIBGCC_BASE)/libbacktrace/include
+CXXINCLUDES-$(CONFIG_LIBBACKTRACE) += -I$(LIBGCC_BASE)/libbacktrace/include
+
+################################################################################
+# libbacktrace code
+################################################################################
+LIBBACKTRACE_CINCLUDES-y = -I$(LIBGCC_BASE)/libbacktrace/include \
+	-I$(LIBGCC_EXTRACTED)/include -I$(LIBBACKTRACE_EXTRACTED) \
+	-I$(LIBGCC_BASE)/libbacktrace/include/config
+
+LIBBACKTRACE_CFLAGS-y += -DHAVE_CONFIG_H -DHAVE_STDINT_H\
+	-funwind-tables \
+	-W -Wall -Wwrite-strings -Wstrict-prototypes -Wmissing-prototypes \
+	-Wold-style-definition -Wmissing-format-attribute -Wcast-qual
+
+LIBBACKTRACE_SRCS-y += $(LIBBACKTRACE_EXTRACTED)/atomic.c
+LIBBACKTRACE_SRCS-y += $(LIBBACKTRACE_EXTRACTED)/dwarf.c
+LIBBACKTRACE_SRCS-y += $(LIBBACKTRACE_EXTRACTED)/fileline.c
+LIBBACKTRACE_SRCS-y += $(LIBBACKTRACE_EXTRACTED)/posix.c
+LIBBACKTRACE_SRCS-y += $(LIBBACKTRACE_EXTRACTED)/print.c
+LIBBACKTRACE_SRCS-y += $(LIBBACKTRACE_EXTRACTED)/sort.c
+LIBBACKTRACE_SRCS-y += $(LIBBACKTRACE_EXTRACTED)/state.c
+LIBBACKTRACE_SRCS-y += $(LIBBACKTRACE_EXTRACTED)/backtrace.c
+LIBBACKTRACE_SRCS-y += $(LIBBACKTRACE_EXTRACTED)/simple.c
+LIBBACKTRACE_SRCS-y += $(LIBBACKTRACE_EXTRACTED)/elf.c
+LIBBACKTRACE_SRCS-y += $(LIBBACKTRACE_EXTRACTED)/mmapio.c
+LIBBACKTRACE_SRCS-y += $(LIBBACKTRACE_EXTRACTED)/mmap.c
+
+LIBBACKTRACE_EXPORTS = $(LIBGCC_BASE)/libbacktrace/exportsyms.uk
+
