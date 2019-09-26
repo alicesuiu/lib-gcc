@@ -41,6 +41,7 @@
 ################################################################################
 $(eval $(call addlib_s,libgcc,$(CONFIG_LIBGCC)))
 $(eval $(call addlib_s,libbacktrace,$(CONFIG_LIBBACKTRACE)))
+$(eval $(call addlib_s,libffi,$(CONFIG_LIBFFI)))
 
 ################################################################################
 # Original sources
@@ -55,6 +56,7 @@ $(eval $(call fetch,libgcc,$(LIBGCC_URL)))
 ################################################################################
 LIBGCC_EXTRACTED = $(LIBGCC_ORIGIN)/gcc-$(LIBGCC_VERSION)
 LIBBACKTRACE_EXTRACTED = $(LIBGCC_EXTRACTED)/libbacktrace
+LIBFFI_EXTRACTED = $(LIBGCC_EXTRACTED)/libffi
 
 ################################################################################
 # Library includes
@@ -64,6 +66,9 @@ CXXINCLUDES-$(CONFIG_LIBGCC) += -I$(LIBGCC_BASE)/include
 
 CINCLUDES-$(CONFIG_LIBBACKTRACE)   += -I$(LIBGCC_BASE)/libbacktrace/include
 CXXINCLUDES-$(CONFIG_LIBBACKTRACE) += -I$(LIBGCC_BASE)/libbacktrace/include
+
+CINCLUDES-$(CONFIG_LIBFFI)   += -I$(LIBGCC_BASE)/libffi/include
+CXXINCLUDES-$(CONFIG_LIBFFI) += -I$(LIBGCC_BASE)/libffi/include
 
 ################################################################################
 # libbacktrace code
@@ -92,3 +97,26 @@ LIBBACKTRACE_SRCS-y += $(LIBBACKTRACE_EXTRACTED)/mmap.c
 
 LIBBACKTRACE_EXPORTS = $(LIBGCC_BASE)/libbacktrace/exportsyms.uk
 
+################################################################################
+# libffi code
+################################################################################
+LIBFFI_COMMON_CINCLUDES-y = -I$(LIBGCC_BASE)/libffi/include \
+       -I$(LIBGCC_EXTRACTED)/include -I$(LIBFFI_EXTRACTED)/include \
+       -I$(LIBGCC_BASE)/libffi/include/config
+LIBFFI_COMMON_CINCLUDES-$(CONFIG_ARCH_X86_64) += -I$(LIBFFI_EXTRACTED)/src/x86
+LIBFFI_ASINCLUDES-y = $(LIBFFI_COMMON_CINCLUDES-y)
+LIBFFI_CINCLUDES-y  = $(LIBFFI_COMMON_CINCLUDES-y)
+
+LIBFFI_CFLAGS-y += -DHAVE_CONFIG_H -fexceptions -Wall \
+	-Wno-implicit-function-declaration -Wno-sign-compare \
+	-Wno-unused-parameter -Wno-empty-body -Wno-implicit-fallthrough
+
+LIBFFI_SRCS-y += $(LIBFFI_EXTRACTED)/src/closures.c
+LIBFFI_SRCS-y += $(LIBFFI_EXTRACTED)/src/java_raw_api.c
+LIBFFI_SRCS-y += $(LIBFFI_EXTRACTED)/src/prep_cif.c
+LIBFFI_SRCS-y += $(LIBFFI_EXTRACTED)/src/raw_api.c
+LIBFFI_SRCS-y += $(LIBFFI_EXTRACTED)/src/types.c
+LIBFFI_SRCS-$(CONFIG_ARCH_X86_64) += $(LIBFFI_EXTRACTED)/src/x86/ffi64.c
+LIBFFI_SRCS-$(CONFIG_ARCH_X86_64) += $(LIBFFI_EXTRACTED)/src/x86/unix64.S
+
+LIBFFI_EXPORTS = $(LIBGCC_BASE)/libffi/exportsyms.uk

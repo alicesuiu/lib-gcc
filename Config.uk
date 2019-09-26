@@ -1,23 +1,29 @@
 menuconfig LIBGCC
 	bool "gcc - GNU Compiler Collection libraries"
 	default n
-	select LIBNOLIBC if !HAVE_LIBC
 	select LIBUKDEBUG
 	select LIBUKALLOC
+	select LIBNEWLIBC
+	select LIBUKMMAP
+	select UKSYSINFO
 
 if LIBGCC
 
 config LIBBACKTRACE
 	bool "libbacktrace library"
 	default n
-	select LIBNEWLIBC
 	select LIBCOMPILER_RT
 	select LIBUNWIND
 	select LIBCXX
 	select LIBCXXABI
-	select LIBUKMMAP
-	select UKSYSINFO
 if LIBBACKTRACE
+endif
+
+config LIBFFI
+       bool "libffi - A Portable Foreign Function Interface Library"
+       default n
+       select LIBPTHREAD_EMBEDDED
+if LIBFFI
 endif
 
 endif
