@@ -95,8 +95,6 @@ LIBBACKTRACE_SRCS-y += $(LIBBACKTRACE_EXTRACTED)/elf.c
 LIBBACKTRACE_SRCS-y += $(LIBBACKTRACE_EXTRACTED)/mmapio.c
 LIBBACKTRACE_SRCS-y += $(LIBBACKTRACE_EXTRACTED)/mmap.c
 
-LIBBACKTRACE_EXPORTS = $(LIBGCC_BASE)/libbacktrace/exportsyms.uk
-
 ################################################################################
 # libffi code
 ################################################################################
@@ -119,4 +117,3 @@ LIBFFI_SRCS-y += $(LIBFFI_EXTRACTED)/src/types.c
 LIBFFI_SRCS-$(CONFIG_ARCH_X86_64) += $(LIBFFI_EXTRACTED)/src/x86/ffi64.c
 LIBFFI_SRCS-$(CONFIG_ARCH_X86_64) += $(LIBFFI_EXTRACTED)/src/x86/unix64.S
 
-LIBFFI_EXPORTS = $(LIBGCC_BASE)/libffi/exportsyms.uk

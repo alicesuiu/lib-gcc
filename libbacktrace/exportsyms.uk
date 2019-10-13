@@ -1,6 +1,0 @@
-backtrace_create_state
-backtrace_full
-backtrace_pcinfo
-backtrace_print
-backtrace_simple
-backtrace_syminfo
