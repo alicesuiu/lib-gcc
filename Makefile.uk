@@ -109,11 +109,13 @@ LIBFFI_CFLAGS-y += -DHAVE_CONFIG_H -fexceptions -Wall \
 	-Wno-implicit-function-declaration -Wno-sign-compare \
 	-Wno-unused-parameter -Wno-empty-body -Wno-implicit-fallthrough
 
+ifneq ($(CONFIG_LIBPYTHON3_EXTENSION_CTYPES),y)
+LIBFFI_SRCS-y += $(LIBFFI_EXTRACTED)/src/types.c
 LIBFFI_SRCS-y += $(LIBFFI_EXTRACTED)/src/closures.c
+endif
 LIBFFI_SRCS-y += $(LIBFFI_EXTRACTED)/src/java_raw_api.c
 LIBFFI_SRCS-y += $(LIBFFI_EXTRACTED)/src/prep_cif.c
 LIBFFI_SRCS-y += $(LIBFFI_EXTRACTED)/src/raw_api.c
-LIBFFI_SRCS-y += $(LIBFFI_EXTRACTED)/src/types.c
 LIBFFI_SRCS-$(CONFIG_ARCH_X86_64) += $(LIBFFI_EXTRACTED)/src/x86/ffi64.c
 LIBFFI_SRCS-$(CONFIG_ARCH_X86_64) += $(LIBFFI_EXTRACTED)/src/x86/unix64.S
 
