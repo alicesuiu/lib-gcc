@@ -42,11 +42,12 @@
 $(eval $(call addlib_s,libgcc,$(CONFIG_LIBGCC)))
 $(eval $(call addlib_s,libbacktrace,$(CONFIG_LIBBACKTRACE)))
 $(eval $(call addlib_s,libffi,$(CONFIG_LIBFFI)))
+$(eval $(call addlib_s,libgcov,$(CONFIG_LIBGCOV)))
 
 ################################################################################
 # Original sources
 ################################################################################
-LIBGCC_VERSION=7.3.0
+LIBGCC_VERSION=7.5.0
 LIBGCC_URL=https://ftp.gnu.org/gnu/gcc/gcc-$(LIBGCC_VERSION)/gcc-$(LIBGCC_VERSION).tar.gz
 LIBGCC_SUBDIR=gcc-$(LIBGCC_VERSION)
 $(eval $(call fetch,libgcc,$(LIBGCC_URL)))
@@ -57,6 +58,7 @@ $(eval $(call fetch,libgcc,$(LIBGCC_URL)))
 LIBGCC_EXTRACTED = $(LIBGCC_ORIGIN)/gcc-$(LIBGCC_VERSION)
 LIBBACKTRACE_EXTRACTED = $(LIBGCC_EXTRACTED)/libbacktrace
 LIBFFI_EXTRACTED = $(LIBGCC_EXTRACTED)/libffi
+LIBGCOV_EXTRACTED = $(LIBGCC_EXTRACTED)/libgcc
 
 ################################################################################
 # Library includes
@@ -69,6 +71,9 @@ CXXINCLUDES-$(CONFIG_LIBBACKTRACE) += -I$(LIBGCC_BASE)/libbacktrace/include
 
 CINCLUDES-$(CONFIG_LIBFFI)   += -I$(LIBGCC_BASE)/libffi/include
 CXXINCLUDES-$(CONFIG_LIBFFI) += -I$(LIBGCC_BASE)/libffi/include
+
+CINCLUDES-$(CONFIG_LIBGCOV)   += -I$(LIBGCC_BASE)/libgcov/include
+CXXINCLUDES-$(CONFIG_LIBGCOV) += -I$(LIBGCC_BASE)/libgcov/include
 
 ################################################################################
 # libbacktrace code
@@ -119,3 +124,16 @@ LIBFFI_SRCS-y += $(LIBFFI_EXTRACTED)/src/raw_api.c
 LIBFFI_SRCS-$(CONFIG_ARCH_X86_64) += $(LIBFFI_EXTRACTED)/src/x86/ffi64.c
 LIBFFI_SRCS-$(CONFIG_ARCH_X86_64) += $(LIBFFI_EXTRACTED)/src/x86/unix64.S
 
+################################################################################
+# libgcov code
+################################################################################
+LIBGCOV_CINCLUDES-y = -I$(LIBGCC_BASE)/libgcov/include \
+		-I$(LIBGCC_BASE)/libgcov/include/config
+
+LIBGCOV_CFLAGS-y += -O2 -DIN_LIBGCC2 -fbuilding-libgcc -fno-stack-protector \
+	-DHAVE_CC_TLS
+
+LIBGCOV_SRCS-y += $(LIBGCOV_EXTRACTED)/libgcov-merge.c
+LIBGCOV_SRCS-y += $(LIBGCOV_EXTRACTED)/libgcov-profiler.c
+LIBGCOV_SRCS-y += $(LIBGCOV_EXTRACTED)/libgcov-interface.c
+LIBGCOV_SRCS-y += $(LIBGCOV_EXTRACTED)/libgcov-driver.c
