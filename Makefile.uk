@@ -131,9 +131,15 @@ LIBGCOV_CINCLUDES-y = -I$(LIBGCC_BASE)/libgcov/include \
 		-I$(LIBGCC_BASE)/libgcov/include/config
 
 LIBGCOV_CFLAGS-y += -O2 -DIN_LIBGCC2 -fbuilding-libgcc -fno-stack-protector \
-	-DHAVE_CC_TLS
+	-DHAVE_CC_TLS -DL_gcov_merge_add -DL_gcov_merge_single -DL_gcov_merge_ior -DL_gcov_merge_time_profile -DL_gcov_merge_icall_topn \
+	-DL_gcov_interval_profiler -DL_gcov_interval_profiler_atomic -DL_gcov_pow2_profiler -DL_gcov_pow2_profiler_atomic \
+	-DL_gcov_one_value_profiler -DL_gcov_one_value_profiler_atomic -DL_gcov_average_profiler -DL_gcov_average_profiler_atomic	\
+	-DL_gcov_ior_profiler -DL_gcov_ior_profiler_atomic -DL_gcov_indirect_call_profiler_v2 -DL_gcov_time_profiler -DL_gcov_indirect_call_topn_profiler \
+	-DL_gcov_dump -DL_gcov_flush -DL_gcov_fork -DL_gcov_execl -DL_gcov_execlp -DL_gcov_execle -DL_gcov_execv -DL_gcov_execvp -DL_gcov_execve \
+	-DL_gcov_reset -DL_gcov \
 
 LIBGCOV_SRCS-y += $(LIBGCOV_EXTRACTED)/libgcov-merge.c
 LIBGCOV_SRCS-y += $(LIBGCOV_EXTRACTED)/libgcov-profiler.c
 LIBGCOV_SRCS-y += $(LIBGCOV_EXTRACTED)/libgcov-interface.c
 LIBGCOV_SRCS-y += $(LIBGCOV_EXTRACTED)/libgcov-driver.c
+LIBGCOV_SRCS-y += $(LIBGCOV_BASE)/libgcov/include/popcountdi2.c
