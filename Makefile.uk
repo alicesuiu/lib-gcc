@@ -42,6 +42,7 @@
 $(eval $(call addlib_s,libgcc,$(CONFIG_LIBGCC)))
 $(eval $(call addlib_s,libbacktrace,$(CONFIG_LIBBACKTRACE)))
 $(eval $(call addlib_s,libffi,$(CONFIG_LIBFFI)))
+$(eval $(call addlib_s,libgcov,$(CONFIG_LIBGCOV)))
 
 ################################################################################
 # Original sources
@@ -69,6 +70,9 @@ CXXINCLUDES-$(CONFIG_LIBBACKTRACE) += -I$(LIBGCC_BASE)/libbacktrace/include
 
 CINCLUDES-$(CONFIG_LIBFFI)   += -I$(LIBGCC_BASE)/libffi/include
 CXXINCLUDES-$(CONFIG_LIBFFI) += -I$(LIBGCC_BASE)/libffi/include
+
+CINCLUDES-$(CONFIG_LIBGCOV)   += -I$(LIBGCC_BASE)/libgcov/include
+CXXINCLUDES-$(CONFIG_LIBGCOV) += -I$(LIBGCC_BASE)/libgcov/include
 
 ################################################################################
 # libbacktrace code
@@ -119,3 +123,21 @@ LIBFFI_SRCS-y += $(LIBFFI_EXTRACTED)/src/raw_api.c
 LIBFFI_SRCS-$(CONFIG_ARCH_X86_64) += $(LIBFFI_EXTRACTED)/src/x86/ffi64.c
 LIBFFI_SRCS-$(CONFIG_ARCH_X86_64) += $(LIBFFI_EXTRACTED)/src/x86/unix64.S
 
+################################################################################
+# libgcov code
+################################################################################
+LIBGCOV_CINCLUDES-y = -I$(LIBGCC_BASE)/libgcov/include  -I$(LIBGCC_EXTRACTED)/include \
+		-I$(LIBGCC_EXTRACTED)/gcc -I$(LIBGCC_EXTRACTED)/libgcc
+
+LIBGCOV_CFLAGS-y += -DIN_LIBGCC2 -fbuilding-libgcc -fno-stack-protector \
+	-DHAVE_CC_TLS -DL_gcov_merge_add -DL_gcov_merge_single -DL_gcov_merge_ior -DL_gcov_merge_time_profile -DL_gcov_merge_icall_topn \
+	-DL_gcov_interval_profiler -DL_gcov_interval_profiler_atomic -DL_gcov_pow2_profiler -DL_gcov_pow2_profiler_atomic \
+	-DL_gcov_one_value_profiler -DL_gcov_one_value_profiler_atomic -DL_gcov_average_profiler -DL_gcov_average_profiler_atomic	\
+	-DL_gcov_ior_profiler -DL_gcov_ior_profiler_atomic -DL_gcov_indirect_call_profiler_v2 -DL_gcov_time_profiler \
+	-DL_gcov_indirect_call_topn_profiler -DL_gcov_dump -DL_gcov_flush -DL_gcov_fork -DL_gcov_execl -DL_gcov_execlp -DL_gcov_execle \
+	-DL_gcov_execv -DL_gcov_execvp -DL_gcov_execve -DL_gcov_reset -DL_gcov \
+
+LIBGCOV_SRCS-y += $(LIBGCC_EXTRACTED)/libgcc/libgcov-merge.c
+LIBGCOV_SRCS-y += $(LIBGCC_EXTRACTED)/libgcc/libgcov-profiler.c
+LIBGCOV_SRCS-y += $(LIBGCC_EXTRACTED)/libgcc/libgcov-interface.c
+LIBGCOV_SRCS-y += $(LIBGCC_EXTRACTED)/libgcc/libgcov-driver.c
